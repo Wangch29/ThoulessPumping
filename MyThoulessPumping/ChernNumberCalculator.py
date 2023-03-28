@@ -3,43 +3,40 @@ import matplotlib.pyplot as plt
 from math import *
 import cmath
 import time
+import ThoulessModel
 
 '''
 Return the hamiltonian of the model.
 '''
 
 # The pumping period
-period = 2 * pi
+period: float
 # The length of cell
 d = 2
+# The Thouless Model
+MODEL: ThoulessModel.ThoulessModel
+
+
+def initialization(model: ThoulessModel.ThoulessModel):
+    global period, MODEL
+
+    period = model.period
+    MODEL = model
+
+    main()
 
 
 def hamiltonian(kx, ky):
-    t = ky
-    k = kx
-
-    h_0 = 1
-    delta_0 = 1
-    omega = 2 * np.pi * t / period
-    h_st = h_0 * np.sin(2 * np.pi * t / period)
-    delta_t = delta_0 * np.cos(2 * np.pi * t / period)
-
-    matrix = np.zeros((2, 2), dtype=complex)
-    # Fill the diagonal elements.
-    matrix[0, 1] = 2 * 1j * delta_0 * sin(omega) * sin(k) - 2 * 1 * cos(k)
-    matrix[1, 0] = -2 * 1j * delta_0 * sin(omega) * sin(k) - 2 * 1 * cos(k)
-    matrix[0, 0] = h_0 * cos(omega)
-    matrix[1, 1] = -h_0 * cos(omega)
-    return matrix
+    return MODEL.bulk_hamiltonian(kx, ky)
 
 
 def main():
     start_time = time.time()
-    n = 100  # 积分密度
+    n = 75  # 积分密度
     delta = 1e-9  # 求导的偏离量
     chern_number = 0  # 陈数初始化
-    for kx in np.arange(-pi/d, pi/d, 2 * pi / (d*n)):
-        for ky in np.arange(-period/2, period/2, period / n):
+    for kx in np.arange(-pi / d, pi / d, 2 * pi / (d * n)):
+        for ky in np.arange(-period / 2, period / 2, period / n):
             H = hamiltonian(kx, ky)
             eigenvalue, eigenvector = np.linalg.eig(H)
             vector = eigenvector[:, np.argsort(np.real(eigenvalue))[0]]  # 价带波函数
@@ -82,9 +79,9 @@ def main():
             F = (A_y_delta_kx - A_y) / delta - (A_x_delta_ky - A_x) / delta
 
             # 陈数(chern number)
-            chern_number = chern_number + F * 2 * pi / (d*n) * period / n
+            chern_number = chern_number + F * 2 * pi / (d * n) * period / n
     chern_number = chern_number / (2 * pi * 1j)
-    print('Chern number = ', chern_number)
+    print('Chern Number = ', chern_number)
     end_time = time.time()
     print('Running time = %.3fs' % (end_time - start_time))
 

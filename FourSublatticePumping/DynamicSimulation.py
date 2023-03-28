@@ -46,12 +46,14 @@ class Simulator:
     def generate_plot(self):
         plt.figure()
 
+        # First plot
         plt.subplot(2, 1, 1)
         matrix = self.__generate_matrix()
         plt.imshow(matrix, interpolation='None', cmap='hot', origin='lower', aspect='auto')
         plt.colorbar(shrink=0.9)
         plt.xticks(np.arange(0, len(self.times), 25))
 
+        # Second plot
         plt.subplot(2, 1, 2)
         x_expected = np.zeros(len(self.times))
         for i in range(len(self.times)):

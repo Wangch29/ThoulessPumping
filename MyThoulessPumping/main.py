@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import ThoulessModel as Tm
 import DynamicSimulation
+import ChernNumberCalculator
 
 # Initialize the Thouless Model
 h_0 = 20
@@ -37,19 +38,16 @@ exact_levels_by_time = np.array([levels_and_vectors[0]
 exact_vectors_by_time = [levels_and_vectors[1]
                          for levels_and_vectors in exact_levels_and_vectors_by_time]
 
-# Get the middle eigenvector.
-occupied_edge_vector_by_time = np.array([np.abs(exact_vectors[len(exact_vectors) // 2 - 1]) ** 2
-                                         for exact_vectors in exact_vectors_by_time])
-
-unoccupied_edge_vector_by_time = np.array([np.abs(exact_vectors[len(exact_vectors) // 2]) ** 2
-                                           for exact_vectors in exact_vectors_by_time])
-
 # Get the bulk energy levels by time.
 bulk_levels_by_time = np.array([model.bulk_levels(t) for t in times])
 
 # ----------------------------------------------------------------------------------------
+# Chern Number Calculation
+ChernNumberCalculator.initialization(model)
+
+# ----------------------------------------------------------------------------------------
 # Three-dimensional plot
-'''
+
 bulk_levels_fig1 = plt.figure()
 bulk_levels_ax1 = Axes3D(bulk_levels_fig1)
 xLine = np.linspace(-np.pi, np.pi, sites // 2 + 1)
@@ -82,7 +80,7 @@ bulk_levels_ax1.set_ylabel('t/Tp')
 bulk_levels_ax1.set_zlabel('E/J')
 
 plt.show()
-'''
+
 # ----------------------------------------------------------------------------------------
 # Dynamic Simulation
 init_state = np.zeros((sites, 1))

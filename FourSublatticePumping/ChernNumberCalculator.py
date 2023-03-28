@@ -3,43 +3,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import *
 import cmath
+import FourSublatticePumpModel as ThoulessModel
 
 '''
 Return the hamiltonian of the model.
 '''
 
 # The pumping period
-period = 2 * pi
+period: float
 # The length of cell
 d = 4
+# The Thouless Model
+MODEL: ThoulessModel.ThoulessModel4
+
+
+def initialization(model: ThoulessModel.ThoulessModel4):
+    global period, MODEL
+
+    period = model.period
+    MODEL = model
+
+    main()
 
 
 def hamiltonian(kx, ky):
-    t = ky
-    k = kx
-
-    h_0 = 1
-    delta_0 = 0
-    omega = 2 * np.pi * t / period
-    delta_t = delta_0 * np.cos(2 * np.pi * t / period)
-
-    matrix = np.zeros((4, 4), dtype=complex)
-    # Fill the diagonal elements.
-    matrix[0, 0] = h_0 * cos(omega)
-    matrix[1, 1] = -h_0 * sin(omega)
-    matrix[2, 2] = -h_0 * cos(omega)
-    matrix[3, 3] = h_0 * sin(omega)
-    # Fill the non-diagonal elements
-    matrix[0, 1] = e**(-1j*k)
-    matrix[1, 0] = np.conj(matrix[0, 1])
-    matrix[1, 2] = e**(-1j*k)
-    matrix[2, 1] = np.conj(matrix[1, 2])
-    matrix[2, 3] = e**(-1j*k)
-    matrix[3, 2] = np.conj(matrix[2, 3])
-    matrix[3, 0] = e**(-1j*k)
-    matrix[0, 3] = np.conj(matrix[3, 0])
-
-    return matrix
+    return MODEL.bulk_hamiltonian(kx, ky)
 
 
 def main():
@@ -47,8 +35,8 @@ def main():
     n = 100  # 积分密度
     delta = 1e-9  # 求导的偏离量
     chern_number = 0  # 陈数初始化
-    for kx in np.arange(-pi/d, pi/d, 2 * pi / (d*n)):
-        for ky in np.arange(-period/2, period/2, period / n):
+    for kx in np.arange(-pi / d, pi / d, 2 * pi / (d * n)):
+        for ky in np.arange(-period / 2, period / 2, period / n):
             H = hamiltonian(kx, ky)
             eigenvalue, eigenvector = np.linalg.eig(H)
             vector = eigenvector[:, np.argsort(np.real(eigenvalue))[0]]  # 价带波函数
@@ -91,7 +79,7 @@ def main():
             F = (A_y_delta_kx - A_y) / delta - (A_x_delta_ky - A_x) / delta
 
             # 陈数(chern number)
-            chern_number = chern_number + F * 2 * pi / (d*n) * period / n
+            chern_number = chern_number + F * 2 * pi / (d * n) * period / n
     chern_number = chern_number / (2 * pi * 1j)
     print('Chern number = ', chern_number)
     end_time = time.time()
