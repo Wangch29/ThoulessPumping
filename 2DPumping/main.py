@@ -1,10 +1,8 @@
 from math import *
 import numpy as np
-from matplotlib import colors
 import matplotlib
 import matplotlib.pyplot as plt
-import FourSublatticePumpModel as Tm
-from FourSublatticePumping import DynamicSimulation
+import TwoDModel as Tm
 import ChernNumberCalculator
 
 # Initialize the Thouless Model
@@ -13,8 +11,11 @@ delta_0 = 0
 t_0 = 1
 w = 0.03
 period = 2 * np.pi / w
-sites = 36  # The number of sub-lattices
-model = Tm.ThoulessModel4(h_0, delta_0, t_0, period, sites)
+sites = 40  # The number of sub-lattices for one dimension
+J_inter = 0.1  # The interacting parameter between cells
+D = 1  # The distance between cells
+d = 1  # The distance between sub-lattices inside a cell
+model = Tm.TwoDimensionalModel(h_0, delta_0, t_0, period, sites, J_inter, D, d)
 
 # Create the time array.
 steps = 100
@@ -45,40 +46,46 @@ ChernNumberCalculator.initialization(model)
 # ----------------------------------------------------------------------------------------
 # Three-dimensional plot
 
+bulk_levels_fig2 = plt.figure()
+bulk_levels_ax2 = plt.axes(projection='3d')
+
+for i in range(4):
+    bulk_levels = np.array(model.bulk_levels(20)[:, :, i])
+    xLine = np.linspace(-np.pi, np.pi, sites // 2 + 1)
+    yLine = np.linspace(-np.pi, np.pi, sites // 2 + 1)
+    X, Y = np.meshgrid(xLine, yLine)
+    energy_levels = bulk_levels
+    bulk_levels_ax2.plot_surface(X, Y, energy_levels)
+
+bulk_levels_ax2.set_xlabel('kx')
+bulk_levels_ax2.set_ylabel('ky')
+bulk_levels_ax2.set_zlabel('E')
+plt.show()
+
+# ----------------------------------------------------------------------------------------
+
 bulk_levels_fig1 = plt.figure()
 bulk_levels_ax1 = plt.axes(projection='3d')
 
-# Normalize the color
-max_data = h_0
-min_data = -h_0
-norm = matplotlib.colors.Normalize(vmin=min_data, vmax=max_data)
-
 for i in range(4):
-    bulk_levels_by_time = np.array([model.bulk_levels(t)[:, i] for t in times])
-    xLine = np.linspace(-np.pi, np.pi, sites // 4 + 1)
+    bulk_levels = np.array([model.bulk_levels(t)[1, :, i] for t in times])  # 默认kx， ky对称
+    xLine = np.linspace(-np.pi, np.pi, sites // 2 + 1)
     X, Y = np.meshgrid(xLine, times / period)
-    energy_levels = bulk_levels_by_time
-    sc = bulk_levels_ax1.plot_surface(X, Y, energy_levels, norm=norm, rstride=1, cstride=1,
-                                      cmap=plt.get_cmap('rainbow'), antialiased=True)
-    # Create color bar
-    if i == 0:
-        bulk_levels_fig1.colorbar(sc, shrink=0.5)
+    energy_levels = bulk_levels
+    bulk_levels_ax1.plot_surface(X, Y, energy_levels)
 
-# Limit z axe range
-bulk_levels_ax1.set_zlim3d(min_data - 2, max_data + 2)
-
-# Set the labels
-bulk_levels_ax1.set_xlabel('k')
+bulk_levels_ax1.set_xlabel('ky')
 bulk_levels_ax1.set_ylabel('Time/Period')
 bulk_levels_ax1.set_zlabel('E')
-
 plt.show()
 
 # ----------------------------------------------------------------------------------------
 # Dynamic Simulation
+'''
 init_state = np.zeros((sites, 1))
 init_state[19] = 1
 
 simulator = DynamicSimulation.Simulator(model, init_state)
 
 simulator.generate_plot()
+'''
