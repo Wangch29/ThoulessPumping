@@ -44,7 +44,6 @@ ChernNumberCalculator.initialization(model)
 
 # ----------------------------------------------------------------------------------------
 # Three-dimensional plot
-
 bulk_levels_fig1 = plt.figure()
 bulk_levels_ax1 = plt.axes(projection='3d')
 
