@@ -21,29 +21,13 @@ steps = 100
 duration = period
 times = np.linspace(0, duration, steps)
 
-'''
-Get the exact energy levels and vectors according to times.
-
-Every time node in 'exact_levels_and_vectors_by_time' array is a tuple containing two sub-tuples: 
-first tuple contains the energy levels, 
-second tuple contains eigenvectors.
-
-exact_levels_and_vectors_by_time = [model.single_exact_diagonalization(t) for t in times]
-
-# Get the energy levels of eigenvectors.
-exact_levels_by_time = np.array([levels_and_vectors[0]
-                                 for levels_and_vectors in exact_levels_and_vectors_by_time])
-# Get the eigenvectors.
-exact_vectors_by_time = [levels_and_vectors[1]
-                         for levels_and_vectors in exact_levels_and_vectors_by_time]
-'''
-
 # ----------------------------------------------------------------------------------------
 # Chern Number Calculation
 ChernNumberCalculator.initialization(model)
 
 # ----------------------------------------------------------------------------------------
 # Three-dimensional plot
+'''
 bulk_levels_fig1 = plt.figure()
 bulk_levels_ax1 = plt.axes(projection='3d')
 
@@ -72,7 +56,7 @@ bulk_levels_ax1.set_ylabel('Time/Period')
 bulk_levels_ax1.set_zlabel('E')
 
 plt.show()
-
+'''
 # ----------------------------------------------------------------------------------------
 # Dynamic Simulation
 init_state = np.zeros((sites, 1))
