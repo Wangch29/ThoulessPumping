@@ -15,11 +15,11 @@ class Simulator:
     PERIOD: float
     # Time div
     Time_Div: float
-    Div_Number = 100
+    Div_Number = 1000
 
     def __init__(self, thouless_model: ThoulessModel.TwoDimensionalModel, init_state: np.ndarray):
         self.model = thouless_model
-        self.times = np.arange(125)
+        self.times = np.arange(3000)
         self.Sites = len(init_state)
         self.NUMBER = self.Sites * self.Sites
         self.PERIOD = self.model.period
@@ -31,6 +31,16 @@ class Simulator:
             for j in range(0, self.Sites):
                 index = self.index_two_to_one(i, j)
                 self.init_state[index] = init_state[i][j]
+
+    def format_func(self, value, tick_number):
+        # N是pi/2的倍数
+        N = value
+        if N == 0:
+            return "0"  # 0点
+        elif N == 2:
+            return r"$\pi$"  # pi
+        elif N == -2:
+            return r"$-\pi$"  # -pi
 
     '''
     Change two-dimensional index to one-dimensional
@@ -59,11 +69,19 @@ class Simulator:
 
         return matrix
 
-    def __x_expected(self, vector: np.ndarray) -> float:
-        x = 0.0
-        for i in range(len(vector)):
-            x += i * vector[i]
-        return x
+    def __x_expected(self, matrix: np.ndarray) -> float:
+        X = 0.0
+        for i in range(len(matrix)):
+            for j in range(len(matrix)):
+                X += i * matrix[i][j]
+        return X
+
+    def __y_expected(self, matrix: np.ndarray) -> float:
+        Y = 0.0
+        for i in range(len(matrix)):
+            for j in range(len(matrix)):
+                Y += i * matrix[j][i]
+        return Y
 
     '''
     Generate the animation plot
@@ -71,17 +89,21 @@ class Simulator:
 
     def generate_plot(self):
         fig = plt.figure()
-        times = np.linspace(0, 10 * self.PERIOD, 10 * self.Div_Number)
+        times = np.linspace(0, 3 * self.PERIOD, 3 * self.Div_Number)
+
+        plt.style.use('ggplot')
 
         norm = colors.Normalize(vmin=0, vmax=1)
 
         # First plot
         # fig1 = fig.add_subplot(2, 1, 1)
+        '''
         frames = []
         for t in times:
             matrix = self.__generate_matrix(t)
             frame = plt.imshow(matrix, interpolation='None', norm=norm, cmap='hot', origin='lower', aspect='auto',
                                animated='True')
+            plt.title('%.2f' % t)
             frames.append([frame])
 
         ani = animation.ArtistAnimation(fig=fig, artists=frames, interval=50, blit=True)
@@ -89,21 +111,30 @@ class Simulator:
         plt.xticks(np.arange(0, self.Sites, self.Sites / 4))
         plt.yticks(np.arange(0, self.Sites, self.Sites / 4))
 
-        pw_writer = animation.PillowWriter(fps=20)
-        ani.save('2DPumping.gif', writer=pw_writer)
-
+        pw_writer = animation.HTMLWriter(fps=20)
+        ani.save('2DPumping.html', writer=pw_writer)
+'''
         # Second plot
-        # fig2 = fig.add_subplot(2, 1, 2)
-        '''
-        x_expected = np.zeros(len(self.times))
-        for i in range(len(self.times)):
-            x_expected[i] = self.__x_expected(matrix[:, i])
-        plt.scatter(self.times / 100, x_expected)
+        fig2 = fig.add_subplot(2, 1, 1)
+        x_expected = []
+        y_expected = []
+        for t in times:
+            matrix = self.__generate_matrix(t)
+            x_expected.append(self.__x_expected(matrix))
+            # y_expected.append(self.__y_expected(matrix))
 
-        plt.ylim(18, 25)
-        plt.ylabel("sites")
+        fig2.scatter(self.times / self.Div_Number, x_expected, s=1)
+
+        plt.ylim(9, 13)
+        plt.ylabel("X")
         plt.xlabel("t/Tp")
 
-        print("The step for a period is %.2f" % (x_expected[100] - x_expected[0]))
-'''
+        '''
+        fig3 = fig.add_subplot(2, 1, 2)
+        fig3.scatter(self.times / self.Div_Number, y_expected, s=1)
+
+        plt.ylim(9, 13)
+        plt.ylabel("Y")
+        plt.xlabel("t/Tp")
+ '''
         plt.show()

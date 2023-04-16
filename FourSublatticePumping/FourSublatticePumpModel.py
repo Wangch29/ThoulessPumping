@@ -81,13 +81,13 @@ class ThoulessModel4:
         matrix[2, 2] = -self.h_0 * cos(omega)
         matrix[3, 3] = self.h_0 * sin(omega)
         # Fill the non-diagonal elements
-        matrix[0, 1] = e ** (-1j * k)
+        matrix[0, 1] = e ** (1j * k)
         matrix[1, 0] = np.conj(matrix[0, 1])
-        matrix[1, 2] = e ** (-1j * k)
+        matrix[1, 2] = e ** (1j * k)
         matrix[2, 1] = np.conj(matrix[1, 2])
-        matrix[2, 3] = e ** (-1j * k)
+        matrix[2, 3] = e ** (1j * k)
         matrix[3, 2] = np.conj(matrix[2, 3])
-        matrix[3, 0] = e ** (-1j * k)
+        matrix[3, 0] = e ** (1j * k)
         matrix[0, 3] = np.conj(matrix[3, 0])
 
         return matrix

@@ -32,7 +32,7 @@ def hamiltonian(kx, ky):
 
 def main():
     start_time = time.time()
-    n = 100  # 积分密度
+    n = 1000  # 积分密度
     delta = 1e-9  # 求导的偏离量
     chern_number = 0  # 陈数初始化
     for kx in np.arange(-pi / d, pi / d, 2 * pi / (d * n)):

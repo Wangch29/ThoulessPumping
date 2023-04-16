@@ -65,8 +65,8 @@ class ThoulessModel:
         omega = 2 * np.pi * t / self.period
         matrix = np.zeros((2, 2), dtype=complex)
         # Fill the diagonal elements.
-        matrix[0, 1] = 2 * 1j * self.delta_0 * np.sin(omega) * np.sin(k) - 2 * 1 * np.cos(k)
-        matrix[1, 0] = -2 * 1j * self.delta_0 * np.sin(omega) * np.sin(k) - 2 * 1 * np.cos(k)
+        matrix[0, 1] = 2 * 1j * self.delta_0 * np.sin(omega) * np.sin(k) + 2 * 1 * np.cos(k)
+        matrix[1, 0] = -2 * 1j * self.delta_0 * np.sin(omega) * np.sin(k) +  2 * 1 * np.cos(k)
         matrix[0, 0] = self.h_0 * np.cos(omega)
         matrix[1, 1] = -self.h_0 * np.cos(omega)
         return matrix

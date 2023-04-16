@@ -31,6 +31,7 @@ class Simulator:
 
     def __generate_matrix(self):
         matrix = np.zeros((self.Sites, len(self.TIMES)))
+        plt.style.use('ggplot')
 
         init_p = self.init_state * np.conj(self.init_state)
         for i in range(0, self.Sites):
@@ -59,9 +60,13 @@ class Simulator:
     def generate_plot(self):
         plt.figure()
 
+        plt.style.use('bmh')
+
         # First plot
+
         plt.subplot(2, 1, 1)
         matrix = self.__generate_matrix()
+        '''
         plt.imshow(matrix, interpolation='None', cmap='hot', origin='lower', aspect='auto')
         plt.colorbar(shrink=0.9)
 
@@ -69,8 +74,9 @@ class Simulator:
         plt.xlabel("t/Tp")
         plt.ylim(0, self.Sites)
         plt.ylabel("Site")
-
+'''
         # Second plot
+
         plt.subplot(2, 1, 2)
         x_expected = np.zeros(len(self.TIMES))
         for i in range(len(self.TIMES)):

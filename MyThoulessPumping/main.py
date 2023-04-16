@@ -7,6 +7,19 @@ from mpl_toolkits.mplot3d import Axes3D
 import ThoulessModel as Tm
 import DynamicSimulation
 import ChernNumberCalculator
+import matplotlib.ticker as tck
+
+
+def format_func(value, tick_number):
+    # N是pi/2的倍数
+    N = int(np.round(2 * value / np.pi))
+    if N == 0:
+        return "0"  # 0点
+    elif N == 2:
+        return r"$\pi$"  # pi
+    elif N == -2:
+        return r"$-\pi$"  # -pi
+
 
 # Initialize the Thouless Model
 h_0 = 20
@@ -29,6 +42,7 @@ Every time node in 'exact_levels_and_vectors_by_time' array is a tuple containin
 first tuple contains the energy levels, 
 second tuple contains eigenvectors.
 '''
+
 exact_levels_and_vectors_by_time = [model.single_exact_diagonalization(t) for t in times]
 
 # Get the energy levels of eigenvectors.
@@ -47,7 +61,7 @@ ChernNumberCalculator.initialization(model)
 
 # ----------------------------------------------------------------------------------------
 # Three-dimensional plot
-
+'''
 bulk_levels_fig1 = plt.figure()
 bulk_levels_ax1 = Axes3D(bulk_levels_fig1)
 xLine = np.linspace(-np.pi, np.pi, sites // 2 + 1)
@@ -73,14 +87,18 @@ bulk_levels_ax1.contourf(X, Y, energy_levels_2, norm=norm, offset=min_data - 4, 
 bulk_levels_fig1.colorbar(sc, shrink=0.5)
 # Limit z axe range
 bulk_levels_ax1.set_zlim3d(min_data - 2, max_data + 2)
+# bulk_levels_ax1.xaxis.set_major_formatter(tck.FormatStrFormatter('%g $\pi$'))
+# bulk_levels_ax1.get_xticks(np.arange(-np.pi, np.pi))
+bulk_levels_ax1.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
+plt.style.use("ggplot")
 
 # Set the labels
 bulk_levels_ax1.set_xlabel('k')
 bulk_levels_ax1.set_ylabel('t/Tp')
-bulk_levels_ax1.set_zlabel('E/J')
+bulk_levels_ax1.set_zlabel('E', labelpad=-3)
 
 plt.show()
-
+'''
 # ----------------------------------------------------------------------------------------
 # Dynamic Simulation
 init_state = np.zeros((sites, 1))
