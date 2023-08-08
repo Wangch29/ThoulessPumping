@@ -121,15 +121,23 @@ class Simulator:
         for t in times:
             matrix = self.__generate_matrix(t)
             x_expected.append(self.__x_expected(matrix))
-            # y_expected.append(self.__y_expected(matrix))
+            y_expected.append(self.__y_expected(matrix))
 
+        fig2.scatter(x_expected, y_expected, s=1)
+        plt.ylim(9.5, 11.5)
+        plt.xlim(9.5, 11.5)
+        plt.ylabel("Y")
+        plt.xlabel("X")
+
+        plt.show()
+
+'''
         fig2.scatter(self.times / self.Div_Number, x_expected, s=1)
 
         plt.ylim(9, 13)
         plt.ylabel("X")
         plt.xlabel("t/Tp")
-
-        '''
+        
         fig3 = fig.add_subplot(2, 1, 2)
         fig3.scatter(self.times / self.Div_Number, y_expected, s=1)
 
@@ -137,4 +145,3 @@ class Simulator:
         plt.ylabel("Y")
         plt.xlabel("t/Tp")
  '''
-        plt.show()
